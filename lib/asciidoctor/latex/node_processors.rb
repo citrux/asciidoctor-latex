@@ -104,22 +104,13 @@ module Asciidoctor
           doc << preamble << "\n "
         else
           doc << File.open(File.join(LaTeX::DATA_DIR, "preamble_#{self.document.doctype}.tex"), 'r') { |f| f.read }
+          doc << "%% Asciidoc TeX Macros %%\n"
+          doc << File.open(File.join(LaTeX::DATA_DIR, 'asciidoc_tex_macros.tex'), 'r') { |f| f.read }
         end
-        doc << "%% Asciidoc TeX Macros %%\n"
-        doc << File.open(File.join(LaTeX::DATA_DIR, 'asciidoc_tex_macros.tex'), 'r') { |f| f.read }
-        doc << "%% User Macros %%\n"
-        # doc << File.open(File.join(LaTeX::DATA_DIR, 'macros.tex'), 'r') { |f| f.read }
         if File.exist? 'macros.tex'
           macros = IO.read('macros.tex')
+          doc << "%% User Macros %%\n"
           doc << macros
-        else
-          # warn "Could not find file macros.tex".yellow
-        end
-        if File.exist?('myEnvironments.tex')
-          doc << "\\input myEnvironments.tex\n"
-        else
-          # warn "I will take input from newEnvironments.tex".blue
-          # doc << "\\input newEnvironments.tex\n"
         end
 
         doc << "%% Front Matter %%"
@@ -127,7 +118,6 @@ module Asciidoctor
         doc << "\\author\{#{self.author}\}\n"
         doc << "\\date\{#{self.revdate}\}\n\n\n"
         doc << "%% Begin Document %%"
-        # doc << "\n\n\\begin\{document\}\n"
         doc << "\n\n\\begin\{document\}\n"
         doc << "\\maketitle\n"
         if self.attributes['toc-placement']=="auto"
@@ -149,7 +139,9 @@ module Asciidoctor
           definitions << "\\newtheorem\{#{name}\}\{#{name.capitalize}\}" << "\n"
         end
 
-        File.open('newEnvironments.tex', 'w') { |f| f.write(definitions) }
+        unless definitions.empty?
+          File.open('newEnvironments.tex', 'w') { |f| f.write(definitions) }
+        end
 
         # Output
         doc << "\n\\end{document}\n" unless document.attributes['header']=='no'
