@@ -189,7 +189,7 @@ module Asciidoctor::LaTeX
 
     # Dispatches a handler for the _node_ (`NODE`)
     # based on its role.
-    def environment node
+    def convert_environment node
 
       warn "entering environment(node)".red if $VERBOSE
 
@@ -221,8 +221,9 @@ module Asciidoctor::LaTeX
       end
 
       node.attributes['roles'] = (node.roles + ['environment']) * ' '
-      self.open node
+      self.convert_open node
     end # method environment
+
 
     def environment_literal node
 
