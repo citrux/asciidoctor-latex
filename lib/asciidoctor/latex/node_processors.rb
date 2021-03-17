@@ -99,7 +99,10 @@ module Asciidoctor
 
       unless embedded? or document.attributes['header']=='no'
         doc << "%% Preamble %%\n"
-        if File.exist? 'preamble.tex'
+        if document.attributes['preamble']
+          preamble = IO.read(document.attributes['preamble'])
+          doc << preamble << "\n "
+        elsif File.exist? 'preamble.tex'
           preamble = IO.read('preamble.tex')
           doc << preamble << "\n "
         else
