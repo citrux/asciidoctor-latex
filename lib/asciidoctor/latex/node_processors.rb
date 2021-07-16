@@ -168,6 +168,9 @@ module Asciidoctor
       tagsuffix = self.numbered ? '' : '*'
       id ="_#{self.title.downcase.gsub(' ', '_')}"
       heading = "\\#{tagname}#{tagsuffix}\{#{self.title}\}"
+      if tagsuffix == '*'
+        heading += "\\addcontentsline\{toc\}\{#{tagname}\}\{#{self.title}\}"
+      end
       heading = $tex.hypertarget id, heading
 
       if self.sectname == 'index'
